@@ -1,0 +1,114 @@
+{{define "content"}}
+ <canvas id="line" width="400" height="200"></canvas>
+
+<script>
+
+ 
+
+  
+  let Label = [{{range .Labels }}{{.}},{{end}}];
+ 
+  let datasets = [];
+
+  let   dataInfo = [];
+    
+  {{range $index, $element := .Products.DataMaps}}  
+  dataInfo.push([{{range $element}}{x: "{{.Date}}" ,date:new Date({{.Date}}),fullname:{{.Fullname}},price:{{.Price}}, y:{{.Quantity}} },{{end}} ]); {{end}}
+ 
+
+  for( let item of dataInfo){
+    item = item.sort(( a,b ) => a.date- b.date);
+  }
+ 
+  function getRandomColor() {
+  var letters = '0123456789ABCDEF';
+  var color = '#';
+  for (var i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+}
+
+  for( let item of dataInfo){
+    console.log(getRandomColor());
+
+     datasets.push({
+      data:item,
+      label: item[0].fullname,
+      borderColor: getRandomColor(),
+     });
+   
+  }
+
+    
+  console.log(datasets);
+
+const myChart = new Chart(document.getElementById("line"), {
+  type: 'line',
+  data: {
+ //  labels: [Label],
+    datasets: datasets
+  },
+  plotOptions: {
+        series: {
+            connectNulls: true
+        }
+    },
+  //showTooltips: true,
+  options: {
+plotOptions: {
+        series: {
+            connectNulls: true
+        }
+    },
+    scales: {
+            y: {
+               beginAtZero: true
+            },
+            
+            x: {
+                beginAtZero: true,
+                type: 'category',
+                labels: Label
+            }
+        },
+
+        
+    spanGaps: true,
+    plugins: {
+            // legend: {
+            //     labels: {
+            //         // This more specific font property overrides the global property
+            //         font: {
+            //             size: 14
+            //         }
+            //     }
+            // }
+        },
+   // showLine: false ,
+    layout: {
+            padding: 20
+        },
+    parsing: {
+        xAxisKey: 'x',
+        yAxisKey: 'y'
+    }, 
+
+  xAxes:[{
+      type: 'date',
+      ticks:{
+       
+        autoSkip: true,
+        maxTicksLimit: 20,
+        beginAtZero: true,
+    
+        //    display: true,
+        //    autoSkip: true,
+         //   maxTicksLimit: 4
+        }
+    }],
+  
+  }
+});
+</script>
+{{end}}
