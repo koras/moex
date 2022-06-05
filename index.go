@@ -23,7 +23,6 @@ func main() {
 	log.Printf("start")
 	// route
 	http.HandleFunc("/", services.Home)
-	http.HandleFunc("/chart", services.GetCharts)
 
 	http.ListenAndServe(":9990", nil)
 }
