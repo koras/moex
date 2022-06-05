@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"moex/services"
 	"net/http"
@@ -24,5 +25,8 @@ func main() {
 	// route
 	http.HandleFunc("/", services.Home)
 
-	http.ListenAndServe(":9990", nil)
+	err := http.ListenAndServe(":9990", nil)
+	if err != nil {
+		fmt.Println("ListendAndServe doesn't work : ", err)
+	}
 }
