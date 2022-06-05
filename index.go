@@ -25,5 +25,5 @@ func main() {
 	http.HandleFunc("/", services.Home)
 	http.HandleFunc("/chart", services.GetCharts)
 
-	http.ListenAndServe(":80", nil)
+	http.ListenAndServe(":9990", nil)
 }
