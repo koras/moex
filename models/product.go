@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"log"
 	"moex/repositories"
 
 	_ "github.com/go-sql-driver/mysql"
@@ -29,11 +30,29 @@ func GetHistory(db *sql.DB) []repositories.Product {
 		return nil
 	}
 
+	log.Print("GetHistory")
+
+	var fullname string = ""
+
+	var percent int64 = 100
+	var oldQuantity float64 = 0.0
+
 	for rows.Next() {
+
 		//	var prd repositories.Product
 		var prd ProductDb
 		err = rows.Scan(&prd.id, &prd.name, &prd.fullname, &prd.price, &prd.quantity, &prd.date)
-		product := repositories.Product{prd.id, prd.name, prd.fullname, prd.price, prd.quantity, prd.date}
+
+		log.Print("prd.date== ", prd.date, " string == ", prd.fullname)
+
+		if fullname != prd.fullname {
+			percent = 100
+		} else {
+			percent = int64(prd.quantity) * 100 / int64(oldQuantity)
+		}
+		oldQuantity = prd.quantity
+
+		product := repositories.Product{prd.id, prd.name, prd.fullname, prd.price, prd.quantity, prd.date, percent}
 		result = append(result, product)
 	}
 	return result

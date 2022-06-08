@@ -7,6 +7,7 @@ type Product struct {
 	Price    float64
 	Quantity float64
 	Date     string
+	Percent  int64
 }
 
 type HistoryDate struct {

@@ -5,6 +5,7 @@ import (
 	"log"
 	"moex/services"
 	"net/http"
+	"os"
 
 	"github.com/joho/godotenv"
 )
@@ -23,9 +24,14 @@ func init() {
 func main() {
 	log.Printf("start")
 	// route
+
+	port := os.Getenv("PORT_SERVER")
+
 	http.HandleFunc("/", services.Home)
 
-	err := http.ListenAndServe(":9990", nil)
+	http.HandleFunc("/chart", services.GetCharts)
+
+	err := http.ListenAndServe(port, nil)
 	if err != nil {
 		fmt.Println("ListendAndServe doesn't work : ", err)
 	}
