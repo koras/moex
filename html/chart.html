@@ -13,7 +13,8 @@
   let   dataInfo = [];
     
   {{range $index, $element := .Products.DataMaps}}  
-  dataInfo.push([{{range $element}}{x: "{{.Date}}" ,date:new Date({{.Date}}),fullname:{{.Fullname}},price:{{.Price}}, y:{{.Quantity}} },{{end}} ]); {{end}}
+  dataInfo.push([{{range $element}}{ x: "{{.Date}}", date:new Date({{.Date}}),  fullname:{{.Fullname}}, price:{{.Price}},y: {{.Percent}} }, {{end}} ,]); 
+   {{end}}
  
 
   for( let item of dataInfo){

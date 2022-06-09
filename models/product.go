@@ -43,15 +43,26 @@ func GetHistory(db *sql.DB) []repositories.Product {
 		var prd ProductDb
 		err = rows.Scan(&prd.id, &prd.name, &prd.fullname, &prd.price, &prd.quantity, &prd.date)
 
-		log.Print("prd.date== ", prd.date, " string == ", prd.fullname)
+		//log.Print("prd.date== ", prd.date, " string == ", prd.fullname)
 
+		log.Print("===pprd.id== ", prd.id, "===prd.prd.date== ", prd.date, " name == ", prd.fullname, " quantity== ", float64(prd.quantity))
 		if fullname != prd.fullname {
 			percent = 100
 		} else {
-			percent = int64(prd.quantity) * 100 / int64(oldQuantity)
-		}
-		oldQuantity = prd.quantity
 
+			if oldQuantity != 0 {
+				percent = int64(prd.quantity) * 100 / int64(oldQuantity)
+			}
+			if percent > 200 {
+				log.Print("prd.date== ", percent, " quantity== ", int64(prd.quantity), " string == ", oldQuantity, " name == ", prd.fullname)
+			}
+
+		}
+
+		fullname = prd.fullname
+
+		oldQuantity = prd.quantity
+		//	log.Print("prd.date== ", percent, " string == ", prd.fullname)
 		product := repositories.Product{prd.id, prd.name, prd.fullname, prd.price, prd.quantity, prd.date, percent}
 		result = append(result, product)
 	}

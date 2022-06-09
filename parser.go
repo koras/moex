@@ -18,7 +18,7 @@ import (
 
 func init() {
 	// loads values from .env into the system
-	if err := godotenv.Load(); err != nil {
+	if err := godotenv.Load("onee.env"); err != nil {
 		log.Print("No .env file found")
 	}
 }
@@ -61,15 +61,16 @@ func lastDay(db *sql.DB, url string, dt string) {
 	}
 
 	for _, rec := range moex.History {
-		product := repositories.Product{
-			Name:     rec.Secid,
-			Price:    rec.Close,
-			Quantity: rec.Marketprice3Tradesvalue,
-			Fullname: rec.Shortname,
-			Date:     dt,
+		if rec.Close != 0 {
+			product := repositories.Product{
+				Name:     rec.Secid,
+				Price:    rec.Close,
+				Quantity: rec.Marketprice3Tradesvalue,
+				Fullname: rec.Shortname,
+				Date:     dt,
+			}
+			models.Update(db, product)
 		}
-		models.Update(db, product)
-
 	}
 }
 
