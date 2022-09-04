@@ -1,5 +1,6 @@
 package config
 
+// https://mholt.github.io/json-to-go/
 type MOEXCURRENT struct {
 	Securities []struct {
 		Secid               string      `json:"SECID"`
