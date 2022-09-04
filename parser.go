@@ -30,7 +30,7 @@ func main() {
 	}
 
 	for v := 1; v < 32; v++ {
-		for i := 5; i <= 9; i++ {
+		for i := 8; i <= 9; i++ {
 			//	url := fmt.Sprintf("https://iss.moex.com/iss/history/engines/stock/markets/shares/boardgroups/57/securities.jsonp?iss.meta=off&iss.json=extended&callback=JSON_CALLBACK&lang=ru&security_collection=3&date=2022-0%v-%v&start=0&limit=20&sort_column=VALUE&sort_order=desc", i, v)
 			url := fmt.Sprintf("https://iss.moex.com/iss/history/engines/stock/markets/shares/boardgroups/57/securities.jsonp?iss.meta=off&iss.json=extended&date=2022-0%v-%v&start=0&limit=100&sort_order=desc", i, v)
 
@@ -56,7 +56,7 @@ func lastDay(db *sql.DB, url string, dt string) {
 
 	contentReplace := services.ClearText(content)
 
-	fmt.Println(contentReplace)
+	//fmt.Println(contentReplace)
 	fmt.Print("\r\n")
 	var moex config.LASTVOLUME
 
@@ -65,6 +65,10 @@ func lastDay(db *sql.DB, url string, dt string) {
 	}
 
 	for _, rec := range moex.History {
+
+		//		fmt.Print("\r\n")
+		//	fmt.Sprintf(" %v ", rec.Shortname)
+		fmt.Sprintf(" %v ", rec.Shortname)
 		if rec.Close != 0 {
 			product := repositories.Product{
 				Name:     rec.Secid,

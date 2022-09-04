@@ -98,9 +98,6 @@ type MOEXCURRENT struct {
 }
 
 type LASTVOLUME struct {
-	Charsetinfo struct {
-		Name string `json:"name"`
-	} `json:"charsetinfo,omitempty"`
 	History []struct {
 		Boardid                 string      `json:"BOARDID"`
 		Tradedate               string      `json:"TRADEDATE"`
@@ -124,9 +121,4 @@ type LASTVOLUME struct {
 		Waval                   float64     `json:"WAVAL"`
 		Tradingsession          int         `json:"TRADINGSESSION"`
 	} `json:"history,omitempty"`
-	HistoryCursor []struct {
-		Index    int `json:"INDEX"`
-		Total    int `json:"TOTAL"`
-		Pagesize int `json:"PAGESIZE"`
-	} `json:"history.cursor,omitempty"`
 }
