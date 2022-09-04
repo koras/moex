@@ -35,7 +35,7 @@ func main() {
 			url := fmt.Sprintf("https://iss.moex.com/iss/history/engines/stock/markets/shares/boardgroups/57/securities.jsonp?iss.meta=off&iss.json=extended&date=2022-0%v-%v&start=0&limit=100&sort_order=desc", i, v)
 
 			dt := fmt.Sprintf("2022-0%v-%v", i, v)
-			fmt.Printf("%s \n\r", url)
+			//	fmt.Printf("%s \n\r", url)
 			lastDay(db, url, dt)
 		}
 	}
@@ -56,7 +56,8 @@ func lastDay(db *sql.DB, url string, dt string) {
 
 	contentReplace := services.ClearText(content)
 
-	//	fmt.Println(contentReplace)
+	fmt.Println(contentReplace)
+	fmt.Print("\r\n")
 	var moex config.LASTVOLUME
 
 	if err := json.Unmarshal([]byte(contentReplace), &moex); err != nil { // Parse []byte to go struct pointer
