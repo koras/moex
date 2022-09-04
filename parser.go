@@ -30,9 +30,12 @@ func main() {
 	}
 
 	for v := 1; v < 32; v++ {
-		for i := 2; i < 11; i++ {
-			url := fmt.Sprintf("https://iss.moex.com/iss/history/engines/stock/markets/shares/boardgroups/57/securities.jsonp?iss.meta=off&iss.json=extended&callback=JSON_CALLBACK&lang=ru&security_collection=3&date=2022-0%v-%v&start=0&limit=20&sort_column=VALUE&sort_order=desc", i, v)
+		for i := 5; i <= 10; i++ {
+			//	url := fmt.Sprintf("https://iss.moex.com/iss/history/engines/stock/markets/shares/boardgroups/57/securities.jsonp?iss.meta=off&iss.json=extended&callback=JSON_CALLBACK&lang=ru&security_collection=3&date=2022-0%v-%v&start=0&limit=20&sort_column=VALUE&sort_order=desc", i, v)
+			url := fmt.Sprintf("https://iss.moex.com/iss/history/engines/stock/markets/shares/boardgroups/57/securities.jsonp?iss.meta=off&iss.json=extended&date=2022-0%v-%v&start=0&limit=100&sort_order=desc", i, v)
+
 			dt := fmt.Sprintf("2022-0%v-%v", i, v)
+			fmt.Printf("%s \n\r", url)
 			lastDay(db, url, dt)
 		}
 	}

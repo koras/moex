@@ -121,7 +121,7 @@ type LASTVOLUME struct {
 		Mp2Valtrd               float64     `json:"MP2VALTRD"`
 		Marketprice3Tradesvalue float64     `json:"MARKETPRICE3TRADESVALUE"`
 		Admittedvalue           float64     `json:"ADMITTEDVALUE"`
-		Waval                   int         `json:"WAVAL"`
+		Waval                   float64     `json:"WAVAL"`
 		Tradingsession          int         `json:"TRADINGSESSION"`
 	} `json:"history,omitempty"`
 	HistoryCursor []struct {
