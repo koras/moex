@@ -2,6 +2,7 @@ package models
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 	"moex/repositories"
 
@@ -25,7 +26,10 @@ type HistoryDate struct {
 
 func GetHistory(db *sql.DB) []repositories.Product {
 	result := []repositories.Product{}
-	rows, err := db.Query("SELECT `id`, `name`, `fullname`, `price`,`quantity`,`date`  from `product` ORDER BY `name`, `date` ASC ;")
+
+	sql := "SELECT `id`, `name`, `fullname`, `price`,`quantity`,`date`   from `product`  where  `date` between '2022-02-01' AND '2022-09-05' and fullname = 'Газпрнефть'  ORDER BY `name`, `date` ASC ;"
+	fmt.Println("sql: ", sql)
+	rows, err := db.Query(sql)
 	if err != nil {
 		return nil
 	}
@@ -44,8 +48,8 @@ func GetHistory(db *sql.DB) []repositories.Product {
 		err = rows.Scan(&prd.id, &prd.name, &prd.fullname, &prd.price, &prd.quantity, &prd.date)
 
 		//log.Print("prd.date== ", prd.date, " string == ", prd.fullname)
-
-		log.Print("===pprd.id== ", prd.id, "===prd.prd.date== ", prd.date, " name == ", prd.fullname, " quantity== ", float64(prd.quantity))
+		//	x := prd.date
+		//	log.Print("===pprd.id== ", prd.id, "===prd.prd.date== ", prd.date, " name == ", prd.fullname, " quantity== ", float64(prd.quantity))
 		if fullname != prd.fullname {
 			percent = 100
 		} else {
@@ -56,8 +60,12 @@ func GetHistory(db *sql.DB) []repositories.Product {
 			if percent > 200 {
 				log.Print("prd.date== ", percent, " quantity== ", int64(prd.quantity), " string == ", oldQuantity, " name == ", prd.fullname)
 			}
-
 		}
+		//	y := percent
+
+		// {{range $index, $element := .Products.DataMaps}} dataInfo.push([{{range $element}}
+		//	{ x: "{{.Date}}", date:new Date({{.Date}}),  fullname:{{.Fullname}}, price:{{.Price}},y: "{{.Percent}}" }, {{end}} ,]);
+		// {{end}}
 
 		fullname = prd.fullname
 
@@ -76,7 +84,9 @@ func GetHistory(db *sql.DB) []repositories.Product {
 func GetDate(db *sql.DB) []repositories.HistoryDate {
 
 	result := []repositories.HistoryDate{}
-	rows, err := db.Query("SELECT `date`  from `product`  GROUP BY  `date`  ORDER BY  `date` ASC;")
+	sql := "SELECT `date`  from `product` where  `date` between '2022-02-01' AND '2022-09-05'  GROUP BY  `date`  ORDER BY  `date` ASC;"
+
+	rows, err := db.Query(sql)
 	if err != nil {
 		return nil
 	}

@@ -1,6 +1,7 @@
 package repositories
 
 type Product struct {
+	//	x        string
 	Id       int64
 	Name     string
 	Fullname string

@@ -1,6 +1,7 @@
 package services
 
 import (
+	"encoding/json"
 	"fmt"
 	"html/template"
 	"moex/config"
@@ -27,6 +28,29 @@ type Charts struct {
 }
 
 func GetCharts(w http.ResponseWriter, r *http.Request) {
+	// подключаем шаблоны
+	tmpl := template.Must(template.ParseFiles("html/layout.html", "html/chart.html"))
+	// получаем данные из базы
+	//	history := models.GetHistory(db)
+	//	historyDate := models.GetDate(db)
+
+	var data ViewData
+
+	var labelNameDate []string
+	var chart Charts
+
+	data = ViewData{
+		Title:    "Market volume",
+		Labels:   labelNameDate,
+		Products: chart,
+	}
+
+	tmpl.Execute(w, data)
+}
+
+func GetData(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "application/json")
+
 	// подключаем базу, рак, но потом переделаю
 	db, err := config.GetMySQLDB()
 	if err != nil {
@@ -34,7 +58,7 @@ func GetCharts(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// подключаем шаблоны
-	tmpl := template.Must(template.ParseFiles("html/layout.html", "html/chart.html"))
+	//	tmpl := template.Must(template.ParseFiles("html/layout.html", "html/chart.html"))
 	// получаем данные из базы
 	history := models.GetHistory(db)
 	historyDate := models.GetDate(db)
@@ -69,11 +93,16 @@ func GetCharts(w http.ResponseWriter, r *http.Request) {
 		labels = append(labels, history[i].Date)
 	}
 
+	// {{range $index, $element := .Products.DataMaps}} dataInfo.push([{{range $element}}
+	//	{ x: "{{.Date}}", date:new Date({{.Date}}),  fullname:{{.Fullname}}, price:{{.Price}},y: "{{.Percent}}" }, {{end}} ,]);
+	// {{end}}
+
 	data = ViewData{
 		Title:    "Market volume",
 		Labels:   labelNameDate,
 		Products: chart,
 	}
-
-	tmpl.Execute(w, data)
+	w.WriteHeader(http.StatusCreated)
+	json.NewEncoder(w).Encode(data)
+	//	tmpl.Execute(w, data)
 }

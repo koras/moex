@@ -30,6 +30,7 @@ func main() {
 	http.HandleFunc("/", services.Home)
 
 	http.HandleFunc("/chart", services.GetCharts)
+	http.HandleFunc("/getInfo", services.GetData)
 
 	err := http.ListenAndServe(port, nil)
 	if err != nil {

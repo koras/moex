@@ -11,6 +11,7 @@ import (
 	"moex/repositories"
 	"moex/services"
 	"net/http"
+	"strconv"
 
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/joho/godotenv"
@@ -28,15 +29,32 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
+	// month
+	for month := 2; month <= 9; month++ {
+		// days
+		for day := 1; day <= 31; day++ {
 
-	for v := 1; v < 32; v++ {
-		for i := 2; i <= 9; i++ {
-			//	url := fmt.Sprintf("https://iss.moex.com/iss/history/engines/stock/markets/shares/boardgroups/57/securities.jsonp?iss.meta=off&iss.json=extended&callback=JSON_CALLBACK&lang=ru&security_collection=3&date=2022-0%v-%v&start=0&limit=20&sort_column=VALUE&sort_order=desc", i, v)
-			url := fmt.Sprintf("https://iss.moex.com/iss/history/engines/stock/markets/shares/boardgroups/57/securities.jsonp?iss.meta=off&iss.json=extended&date=2022-0%v-%v&start=0&limit=100&sort_order=desc", i, v)
+			for p := 0; p <= 4; p++ {
 
-			dt := fmt.Sprintf("2022-0%v-%v", i, v)
-			//	fmt.Printf("%s \n\r", url)
-			lastDay(db, url, dt)
+				pageStart := p * 100
+
+				dayString := strconv.Itoa(day)
+				if day < 10 {
+					dayString = "0" + strconv.Itoa(day)
+				}
+
+				monthString := strconv.Itoa(month)
+				if month < 10 {
+					monthString = "0" + strconv.Itoa(month)
+				}
+
+				//	url := fmt.Sprintf("https://iss.moex.com/iss/history/engines/stock/markets/shares/boardgroups/57/securities.jsonp?iss.meta=off&iss.json=extended&callback=JSON_CALLBACK&lang=ru&security_collection=3&date=2022-0%v-%v&start=0&limit=20&sort_column=VALUE&sort_order=desc", i, v)
+				url := fmt.Sprintf("https://iss.moex.com/iss/history/engines/stock/markets/shares/boardgroups/57/securities.jsonp?iss.meta=off&iss.json=extended&date=2022-%v-%v&start=%v&limit=100&sort_order=desc", monthString, dayString, pageStart)
+
+				dt := fmt.Sprintf("2022-%v-%v", monthString, dayString)
+				fmt.Printf("%s \n\r", url)
+				lastDay(db, url, dt)
+			}
 		}
 	}
 	fmt.Println("done")
@@ -50,34 +68,38 @@ func lastDay(db *sql.DB, url string, dt string) {
 	res, err := http.Get(url)
 	body, err := ioutil.ReadAll(res.Body)
 	if err != nil {
+		fmt.Printf("fail %s ", url)
 		panic(err)
 	}
 	content := string(body)
 
 	contentReplace := services.ClearText(content)
+	if contentReplace != "" {
+		fmt.Print("\r")
+		var moex config.LASTVOLUME
 
-	//fmt.Println(contentReplace)
-	fmt.Print("\r\n")
-	var moex config.LASTVOLUME
+		if err := json.Unmarshal([]byte(contentReplace), &moex); err != nil { // Parse []byte to go struct pointer
+			fmt.Println("contentReplace")
+			fmt.Println(contentReplace)
+			fmt.Printf("fail 2 %s ", url)
+			panic(err)
+		}
 
-	if err := json.Unmarshal([]byte(contentReplace), &moex); err != nil { // Parse []byte to go struct pointer
-		panic(err)
-	}
+		for _, rec := range moex.History {
 
-	for _, rec := range moex.History {
-
-		//		fmt.Print("\r\n")
-		//	fmt.Sprintf(" %v ", rec.Shortname)
-		fmt.Sprintf(" %v ", rec.Shortname)
-		if rec.Close != 0 {
-			product := repositories.Product{
-				Name:     rec.Secid,
-				Price:    rec.Close,
-				Quantity: rec.Marketprice3Tradesvalue,
-				Fullname: rec.Shortname,
-				Date:     dt,
+			//		fmt.Print("\r\n")
+			//	fmt.Sprintf(" %v ", rec.Shortname)
+			fmt.Sprintf(" %v ", rec.Shortname)
+			if rec.Close != 0 {
+				product := repositories.Product{
+					Name:     rec.Secid,
+					Price:    rec.Close,
+					Quantity: rec.Value,
+					Fullname: rec.Shortname,
+					Date:     dt,
+				}
+				models.Update(db, product)
 			}
-			models.Update(db, product)
 		}
 	}
 }
